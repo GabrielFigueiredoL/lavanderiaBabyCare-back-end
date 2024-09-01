@@ -1,9 +1,13 @@
 package com.gabrielfigueiredol.lavanderiababycare.services;
 
 import com.gabrielfigueiredol.lavanderiababycare.entities.Product;
+import com.gabrielfigueiredol.lavanderiababycare.exceptions.ProductNotFoundException;
 import com.gabrielfigueiredol.lavanderiababycare.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -19,18 +23,24 @@ public class ProductService {
     }
 
     public void delete(String id) {
-        productRepository.deleteById(id);
+        if (!productRepository.existsById(id)) {
+            throw new ProductNotFoundException();
+        }
+            productRepository.deleteById(id);
     }
 
     public Product insert(Product product) {
-            String uuid = UUID.randomUUID().toString();
-            Timestamp updated_at = new Timestamp(System.currentTimeMillis());
-            product.setId(uuid);
-            product.setUpdated_at(updated_at);
-            return productRepository.save(product);
+        String uuid = UUID.randomUUID().toString();
+        Timestamp updated_at = new Timestamp(System.currentTimeMillis());
+        product.setId(uuid);
+        product.setUpdated_at(updated_at);
+        return productRepository.save(product);
     }
 
     public Product update(String id, Product product) {
+        if (!productRepository.existsById(id)) {
+            throw new ProductNotFoundException();
+        }
         Product productReference = productRepository.getReferenceById(id);
         updateData(productReference, product);
         return productRepository.save(productReference);
