@@ -1,5 +1,6 @@
 package com.gabrielfigueiredol.lavanderiababycare.infra;
 
+import com.gabrielfigueiredol.lavanderiababycare.exceptions.OrderNotFoundException;
 import com.gabrielfigueiredol.lavanderiababycare.exceptions.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,5 +14,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ProductNotFoundException.class)
     private ResponseEntity<String> productNotFoundHandler(ProductNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado");
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    private ResponseEntity<String> orderNotFoundHandler(OrderNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pedido não encontrado");
     }
 }
