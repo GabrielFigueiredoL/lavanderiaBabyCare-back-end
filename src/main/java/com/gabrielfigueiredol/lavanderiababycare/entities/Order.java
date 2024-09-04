@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "orders")
@@ -33,6 +35,9 @@ public class Order implements Serializable {
 
     private Integer shipping;
     private Integer discount;
+
+    @OneToMany(mappedBy = "id.order", cascade = CascadeType.ALL)
+    private Set<OrderItem> selectedItems = new HashSet<>();
 
     @Transient
     private Integer orderStatusId;
@@ -168,6 +173,10 @@ public class Order implements Serializable {
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public Set<OrderItem> getSelectedItems() {
+        return selectedItems;
     }
 
     @Override
