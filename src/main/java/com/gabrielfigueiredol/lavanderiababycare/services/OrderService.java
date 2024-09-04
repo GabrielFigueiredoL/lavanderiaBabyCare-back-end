@@ -1,6 +1,7 @@
 package com.gabrielfigueiredol.lavanderiababycare.services;
 
 import com.gabrielfigueiredol.lavanderiababycare.entities.Order;
+import com.gabrielfigueiredol.lavanderiababycare.entities.OrderItem;
 import com.gabrielfigueiredol.lavanderiababycare.exceptions.OrderNotFoundException;
 import com.gabrielfigueiredol.lavanderiababycare.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,12 @@ public class OrderService {
     public Order insert(Order order) {
         String uuid = UUID.randomUUID().toString();
         Timestamp updated_at = new Timestamp(System.currentTimeMillis());
-        order.setId(uuid);
         order.setStatus(orderStatus.getOrderStatusById(order.getOrderStatusId()));
+        order.setId(uuid);
+        for (OrderItem item : order.getSelectedItems()) {
+            item.setOrder(order);
+        }
+
         return orderRepository.save(order);
     }
 
