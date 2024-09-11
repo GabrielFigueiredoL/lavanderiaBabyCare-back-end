@@ -1,9 +1,10 @@
 package com.gabrielfigueiredol.lavanderiababycare.entities;
 
 import jakarta.persistence.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -23,9 +24,9 @@ public class Order implements Serializable {
     private String clientPhone;
 
     @Column(name = "pickup_date")
-    private Timestamp pickupDate;
+    private LocalDate pickupDate;
     @Column(name = "delivery_date")
-    private Timestamp deliveryDate;
+    private LocalDate deliveryDate;
 
     private String cep;
     private String address;
@@ -39,15 +40,13 @@ public class Order implements Serializable {
     @OneToMany(mappedBy = "id.order", cascade = CascadeType.ALL)
     private Set<OrderItem> selectedItems = new HashSet<>();
 
-    @Transient
-    private Integer orderStatusId;
     @ManyToOne
     @JoinColumn(name = "status")
     private OrderStatus status;
 
     public Order(){}
 
-    public Order(String id, String clientName, String clientPhone, Timestamp pickupDate, Timestamp deliveryDate, String cep, String address, String district, String number, String complement, Integer shipping, Integer discount, Integer orderStatusId) {
+    public Order(String id, String clientName, String clientPhone, LocalDate pickupDate, LocalDate deliveryDate, String cep, String address, String district, String number, String complement, Integer shipping, Integer discount, Integer orderStatusId) {
         this.id = id;
         this.clientName = clientName;
         this.clientPhone = clientPhone;
@@ -60,7 +59,6 @@ public class Order implements Serializable {
         this.complement = complement;
         this.shipping = shipping;
         this.discount = discount;
-        this.orderStatusId = orderStatusId;
     }
 
     public String getId() {
@@ -79,11 +77,11 @@ public class Order implements Serializable {
         this.clientName = clientName;
     }
 
-    public Timestamp getPickupDate() {
+    public LocalDate getPickupDate() {
         return pickupDate;
     }
 
-    public void setPickupDate(Timestamp pickupDate) {
+    public void setPickupDate(LocalDate pickupDate) {
         this.pickupDate = pickupDate;
     }
 
@@ -95,11 +93,11 @@ public class Order implements Serializable {
         this.clientPhone = clientPhone;
     }
 
-    public Timestamp getDeliveryDate() {
+    public LocalDate getDeliveryDate() {
         return deliveryDate;
     }
 
-    public void setDeliveryDate(Timestamp deliveryDate) {
+    public void setDeliveryDate(LocalDate deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
 
@@ -158,14 +156,6 @@ public class Order implements Serializable {
     public void setDiscount(Integer discount) {
         this.discount = discount;
     }
-
-    public Integer getOrderStatusId() {
-        return orderStatusId;
-    }
-
-    public void setOrderStatusId(Integer orderStatusId) {
-        this.orderStatusId = orderStatusId;
-    }
     
     public OrderStatus getStatus() {
         return status;
@@ -177,6 +167,15 @@ public class Order implements Serializable {
 
     public Set<OrderItem> getSelectedItems() {
         return selectedItems;
+    }
+
+    public Integer getTotal() {
+        Integer sum = 0;
+        for (OrderItem item: selectedItems) {
+            sum += item.getSubTotal();
+        }
+
+        return sum;
     }
 
     @Override
