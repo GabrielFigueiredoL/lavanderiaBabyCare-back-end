@@ -9,13 +9,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/orders")
+@CrossOrigin(origins = "*")
 public class OrderResource {
     @Autowired
     private OrderService orderService;
-
 
     @GetMapping
     public ResponseEntity<List<Order>> findAll() {
@@ -24,6 +25,18 @@ public class OrderResource {
     }
 
     @GetMapping(value = "/{id}")
+    public ResponseEntity<Optional<Order>> findById(@PathVariable String id) {
+        System.out.println(id);
+        return ResponseEntity.ok().body(orderService.findById(id));
+    }
+
+    @GetMapping(value = "/daily-orders")
+    public ResponseEntity<List<Order>> findDailyOrders() {
+        List<Order> filteredOrderList = orderService.findDailyOrders();
+        return ResponseEntity.ok().body(filteredOrderList);
+    }
+
+    @GetMapping(value = "/status/{id}")
     public ResponseEntity<List<Order>> findByStatusId(@PathVariable Integer id) {
         List<Order> filteredOrderList = orderService.findByStatusId(id);
         return ResponseEntity.ok().body(filteredOrderList);

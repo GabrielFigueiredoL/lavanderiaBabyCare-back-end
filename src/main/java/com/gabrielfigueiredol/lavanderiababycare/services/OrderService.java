@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,10 +29,21 @@ public class OrderService {
         return orderRepository.findByStatusId(id);
     }
 
+    public Optional<Order> findById(String id) {
+        if (!orderRepository.existsById(id)) {
+            throw new OrderNotFoundException();
+        }
+        return orderRepository.findById(id);
+    }
+
+    public List<Order> findDailyOrders() {
+        LocalDate today = LocalDate.now();
+        return orderRepository.findDailyOrders(today);
+    }
+
     public Order insert(Order order) {
         String uuid = UUID.randomUUID().toString();
         Timestamp updated_at = new Timestamp(System.currentTimeMillis());
-        order.setStatus(orderStatus.getOrderStatusById(order.getOrderStatusId()));
         order.setId(uuid);
         for (OrderItem item : order.getSelectedItems()) {
             item.setOrder(order);
@@ -60,13 +73,13 @@ public class OrderService {
         orderReference.setClientPhone(order.getClientPhone());
         orderReference.setPickupDate(order.getPickupDate());
         orderReference.setDeliveryDate(order.getDeliveryDate());
-        orderReference.setCep(orderReference.getCep());
-        orderReference.setAddress(orderReference.getAddress());
-        orderReference.setDistrict(orderReference.getDistrict());
-        orderReference.setNumber(orderReference.getNumber());
-        orderReference.setComplement(orderReference.getComplement());
-        orderReference.setShipping(orderReference.getShipping());
-        orderReference.setDiscount(orderReference.getDiscount());
-        orderReference.setStatus(orderStatus.getOrderStatusById(order.getOrderStatusId()));
+        orderReference.setCep(order.getCep());
+        orderReference.setAddress(order.getAddress());
+        orderReference.setDistrict(order.getDistrict());
+        orderReference.setNumber(order.getNumber());
+        orderReference.setComplement(order.getComplement());
+        orderReference.setShipping(order.getShipping());
+        orderReference.setDiscount(order.getDiscount());
+        orderReference.setStatus(order.getStatus());
     }
 }
