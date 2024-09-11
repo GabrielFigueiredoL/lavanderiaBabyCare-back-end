@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "product")
@@ -16,6 +18,9 @@ public class Product implements Serializable {
     private String name;
     private Integer price;
     private Timestamp updated_at;
+
+    @OneToMany(mappedBy = "id.product")
+    private Set<OrderItem> items = new HashSet<>();
 
     public Product(){}
 
