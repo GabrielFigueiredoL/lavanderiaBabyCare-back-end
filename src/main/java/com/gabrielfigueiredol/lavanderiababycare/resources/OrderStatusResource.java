@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/order-status")
+@CrossOrigin(origins = "*")
 public class OrderStatusResource {
     @Autowired
     private OrderStatusService orderStatus;

@@ -1,5 +1,6 @@
 package com.gabrielfigueiredol.lavanderiababycare.resources;
 
+import com.gabrielfigueiredol.lavanderiababycare.entities.DistrictAmountPerDay;
 import com.gabrielfigueiredol.lavanderiababycare.entities.Order;
 import com.gabrielfigueiredol.lavanderiababycare.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -26,7 +28,6 @@ public class OrderResource {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Optional<Order>> findById(@PathVariable String id) {
-        System.out.println(id);
         return ResponseEntity.ok().body(orderService.findById(id));
     }
 
@@ -40,6 +41,12 @@ public class OrderResource {
     public ResponseEntity<List<Order>> findByStatusId(@PathVariable Integer id) {
         List<Order> filteredOrderList = orderService.findByStatusId(id);
         return ResponseEntity.ok().body(filteredOrderList);
+    }
+
+    @GetMapping(value = "/daily-orders/districts")
+    public ResponseEntity<Map<String, List<DistrictAmountPerDay>>> findDistrictAmountPerDay() {
+        Map<String, List<DistrictAmountPerDay>> filteredList = orderService.findDistrictAmountPerDay();
+        return ResponseEntity.ok().body(filteredList);
     }
 
     @PostMapping

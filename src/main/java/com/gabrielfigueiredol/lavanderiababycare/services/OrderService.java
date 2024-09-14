@@ -1,5 +1,6 @@
 package com.gabrielfigueiredol.lavanderiababycare.services;
 
+import com.gabrielfigueiredol.lavanderiababycare.entities.DistrictAmountPerDay;
 import com.gabrielfigueiredol.lavanderiababycare.entities.Order;
 import com.gabrielfigueiredol.lavanderiababycare.entities.OrderItem;
 import com.gabrielfigueiredol.lavanderiababycare.exceptions.OrderNotFoundException;
@@ -9,9 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -39,6 +39,37 @@ public class OrderService {
     public List<Order> findDailyOrders() {
         LocalDate today = LocalDate.now();
         return orderRepository.findDailyOrders(today);
+    }
+
+    public Map<String, List<DistrictAmountPerDay>> findDistrictAmountPerDay() {
+        List<Order> dailyOrders = orderRepository.findDailyOrders(LocalDate.now());
+
+        List<Order> deliveryOrders = dailyOrders.stream()
+                .filter(order -> order.getDeliveryDate() != null && order.getDeliveryDate().isEqual(LocalDate.now()))
+                .collect(Collectors.toList());
+
+        List<Order> pickupOrders = dailyOrders.stream()
+                .filter(order -> order.getPickupDate() != null && order.getPickupDate().isEqual(LocalDate.now()))
+                .collect(Collectors.toList());
+
+        Map<String, Long> deliveryAddressCountMap = deliveryOrders.stream()
+                .collect(Collectors.groupingBy(Order::getDistrict, Collectors.counting()));
+
+        Map<String, Long> pickupAddressCountMap = pickupOrders.stream()
+                .collect(Collectors.groupingBy(Order::getDistrict, Collectors.counting()));
+
+        List<DistrictAmountPerDay> deliveryDistrictAmountPerDayList = deliveryAddressCountMap.entrySet().stream()
+                .map(entry -> new DistrictAmountPerDay(entry.getKey(), entry.getValue().intValue()))
+                .collect(Collectors.toList());
+
+        List<DistrictAmountPerDay> pickupDistrictAmountPerDayList = pickupAddressCountMap.entrySet().stream()
+                .map(entry -> new DistrictAmountPerDay(entry.getKey(), entry.getValue().intValue()))
+                .collect(Collectors.toList());
+
+        return Map.of(
+                "deliveryOrders", deliveryDistrictAmountPerDayList,
+                "pickupOrders", pickupDistrictAmountPerDayList
+        );
     }
 
     public Order insert(Order order) {
