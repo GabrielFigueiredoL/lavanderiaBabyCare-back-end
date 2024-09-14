@@ -4,10 +4,7 @@ import com.gabrielfigueiredol.lavanderiababycare.entities.Product;
 import com.gabrielfigueiredol.lavanderiababycare.exceptions.ProductNotFoundException;
 import com.gabrielfigueiredol.lavanderiababycare.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -31,9 +28,9 @@ public class ProductService {
 
     public Product insert(Product product) {
         String uuid = UUID.randomUUID().toString();
-        Timestamp updated_at = new Timestamp(System.currentTimeMillis());
+        Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
         product.setId(uuid);
-        product.setUpdated_at(updated_at);
+        product.setUpdatedAt(updatedAt);
         return productRepository.save(product);
     }
 
@@ -49,6 +46,6 @@ public class ProductService {
     public void updateData(Product productReference, Product product) {
         productReference.setName(product.getName());
         productReference.setPrice(product.getPrice());
-        productReference.setUpdated_at(new Timestamp(System.currentTimeMillis()));
+        productReference.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
     }
 }

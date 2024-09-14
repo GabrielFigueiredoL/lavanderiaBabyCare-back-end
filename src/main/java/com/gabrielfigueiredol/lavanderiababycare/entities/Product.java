@@ -17,7 +17,8 @@ public class Product implements Serializable {
     private String id;
     private String name;
     private Integer price;
-    private Timestamp updated_at;
+    @Column(name = "updated_at")
+    private Timestamp updatedAt;
 
     @OneToMany(mappedBy = "id.product")
     private Set<OrderItem> items = new HashSet<>();
@@ -26,7 +27,7 @@ public class Product implements Serializable {
 
     public Product(String id, Timestamp updated_at, Integer price, String name) {
         this.id = id;
-        this.updated_at = updated_at;
+        this.updatedAt = updated_at;
         this.price = price;
         this.name = name;
     }
@@ -44,12 +45,12 @@ public class Product implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getUpdated_at() {
-        return updated_at;
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(Timestamp updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Integer getPrice() {
