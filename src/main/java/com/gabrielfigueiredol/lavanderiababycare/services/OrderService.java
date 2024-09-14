@@ -1,9 +1,8 @@
 package com.gabrielfigueiredol.lavanderiababycare.services;
 
-import com.gabrielfigueiredol.lavanderiababycare.entities.DistrictAmountPerDay;
-import com.gabrielfigueiredol.lavanderiababycare.entities.Order;
-import com.gabrielfigueiredol.lavanderiababycare.entities.OrderItem;
+import com.gabrielfigueiredol.lavanderiababycare.entities.*;
 import com.gabrielfigueiredol.lavanderiababycare.exceptions.OrderNotFoundException;
+import com.gabrielfigueiredol.lavanderiababycare.repositories.ExpenseRepository;
 import com.gabrielfigueiredol.lavanderiababycare.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,9 @@ public class OrderService {
 
     @Autowired
     private OrderStatusService orderStatus;
+
+    @Autowired
+    private ExpenseRepository expenseRepository;
 
     public List<Order> findAll() {
         return orderRepository.findAll();
@@ -39,6 +41,21 @@ public class OrderService {
     public List<Order> findDailyOrders() {
         LocalDate today = LocalDate.now();
         return orderRepository.findDailyOrders(today);
+    }
+
+    public MonthMetrics MonthFinancesOverview(String month, String year) {
+        List<Order> monthOrders = orderRepository.findOrdersByMonthAndYear(month, year);
+        MonthMetrics monthMetrics = new MonthMetrics();
+        monthMetrics.setId(month + "/" + year);
+        monthMetrics.setTotalOrders(monthOrders.size());
+        Integer revenues = 0;
+        Integer expenses = 0;
+        for (Order order : monthOrders) {
+            revenues +=order.getTotal();
+        }
+        monthMetrics.setRevenues(revenues);
+        monthMetrics.setExpenses(expenseRepository.findExpensesByMonthAndYear(month, year));
+        return monthMetrics;
     }
 
     public Map<String, List<DistrictAmountPerDay>> findDistrictAmountPerDay() {

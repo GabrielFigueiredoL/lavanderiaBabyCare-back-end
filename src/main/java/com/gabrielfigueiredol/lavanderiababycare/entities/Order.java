@@ -1,7 +1,6 @@
 package com.gabrielfigueiredol.lavanderiababycare.entities;
 
 import jakarta.persistence.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -169,13 +168,17 @@ public class Order implements Serializable {
         return selectedItems;
     }
 
-    public Integer getTotal() {
+    public Integer getItemsTotal() {
         Integer sum = 0;
         for (OrderItem item: selectedItems) {
             sum += item.getSubTotal();
         }
 
         return sum;
+    }
+
+    public Integer getTotal() {
+        return getItemsTotal() + getShipping() - getDiscount();
     }
 
     @Override

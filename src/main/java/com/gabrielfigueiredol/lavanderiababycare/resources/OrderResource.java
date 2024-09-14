@@ -1,6 +1,7 @@
 package com.gabrielfigueiredol.lavanderiababycare.resources;
 
 import com.gabrielfigueiredol.lavanderiababycare.entities.DistrictAmountPerDay;
+import com.gabrielfigueiredol.lavanderiababycare.entities.MonthMetrics;
 import com.gabrielfigueiredol.lavanderiababycare.entities.Order;
 import com.gabrielfigueiredol.lavanderiababycare.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,13 @@ public class OrderResource {
     public ResponseEntity<List<Order>> findDailyOrders() {
         List<Order> filteredOrderList = orderService.findDailyOrders();
         return ResponseEntity.ok().body(filteredOrderList);
+    }
+
+    @GetMapping(value = "/finances/{monthAndYear}")
+    public ResponseEntity<MonthMetrics> MonthFinancesOverview(@PathVariable String monthAndYear) {
+        String [] date = monthAndYear.split("-");
+
+        return ResponseEntity.ok().body(orderService.MonthFinancesOverview(date[0], date[1]));
     }
 
     @GetMapping(value = "/status/{id}")
